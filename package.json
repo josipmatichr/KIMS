@@ -1,0 +1,35 @@
+{
+  "name": "chat-at-fesb",
+  "version": "1.0.0",
+  "description": "Simple Electron application for teaching cryptography and network security",
+  "main": "main.js",
+  "scripts": {
+    "watch": "./node_modules/.bin/webpack-dev-server --hot",
+    "server": "set DEBUG=server & node server.js",
+    "start": "electron ."
+  },
+  "author": "Mario Cagalj",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-loader": "^6.2.10",
+    "babel-plugin-transform-object-rest-spread": "^6.22.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "css-loader": "^0.26.1",
+    "electron": "^1.4.14",
+    "electron-notify": "^0.1.0",
+    "file-loader": "^0.10.0",
+    "flux": "^3.1.2",
+    "node-sass": "^4.5.0",
+    "react": "^15.4.2",
+    "react-addons-css-transition-group": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "sass-loader": "^5.0.1",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.3.0",
+    "debug": "^2.2.0"
+  }
+}

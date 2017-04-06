@@ -1,0 +1,222 @@
+@import './partials/reset';
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+//----------------------
+// Basic variables
+//----------------------
+$color-1: #000; 
+$color-2: #ff358b;
+
+$body--bg-color: #fff;
+$body--color: $color-1;
+$body--text-size: 16px;
+$body--font-family: 'Roboto';
+$title--font-family: 'Open Sans';
+$title--font-size: 1.45rem;
+$title--font-weight: 600;
+$title--line-height: 1;
+$title--margin: 2.5rem;
+
+$cell--pad: 1rem;
+
+//----------------------
+// Mixins
+//----------------------
+@mixin cns-font-face($family: false, $size: false, $colour: false, $weight: false,  $lh: false) {
+    @if $family 
+        { font-family: $family; }
+    @else 
+        { font-family: Helvetica, Arial, sans-serif; }
+    @if $size { 
+        font-size: $size; 
+        line-height: $title--line-height;
+    }
+    @if $colour { color: $colour; }
+    @if $weight { font-weight: $weight; }
+    @if $lh { line-height: $lh; }
+}
+
+@mixin cns-cells() {
+    @for $i from 1 through 12 {
+        $width: percentage($i / 12);
+        &.-w-#{$i}-#{12} {    
+            width: $width;       
+        }
+    }    
+}
+
+@mixin cns-fixed-height() {
+    $steps: 12;
+    @for $i from 1 through $steps {
+        $height: percentage($i / $steps);
+        &.-h-#{$i}-#{$steps} {
+            height: $height;
+            min-height: $height;
+        }
+    }    
+}
+
+@mixin link() {
+    line-height: 1.5;    
+    cursor: pointer;    
+    &:active {
+        background-color: $color-2;              
+    }    
+}
+
+//----------------------
+// Base layout
+//----------------------
+body { 
+    background-color: $body--bg-color;
+    @include cns-font-face($body--font-family, $body--text-size, $body--color);    
+    width: 100%;
+    height: 100%;
+}
+
+.cns-page {
+    position: relative;
+    height: 100vh;    
+}
+
+.cns-container {
+    border: 0px solid dodgerblue; /* Debugging */
+    display: flex;
+    flex-flow: row wrap;    
+    justify-content: center;
+    &.-justify-between {
+        justify-content: space-between;
+    }        
+    &.-space-between {
+        align-content: space-between;    
+    }  
+    &.-align-center {
+        align-items: center;
+    }
+    &.-align-end {
+        align-items: flex-end;
+    } 
+    &.-column {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        &.-justify-end {
+            justify-content: flex-end;
+        }
+        &.-justify-between {
+            justify-content: space-between;
+        }
+        &.-justify-around {
+            justify-content: space-around;
+        }        
+    }  
+    @include cns-fixed-height(); /* Usage: -h-2-12 */ 
+}
+
+/**
+ * Flex item cells: usage -w-1-12, -w-2-12, ..., -w-12-12.
+ */
+.cns-cell { 
+    border: 0px solid red; /* Debugging */
+    @include cns-cells();  
+    &.-pad-r {
+        padding-right: $cell--pad;
+    }
+    &.-pad-l {
+        padding-left: $cell--pad;
+    }
+    &.-pad-t {
+        padding-top: $cell--pad;
+    }
+    &.-pad-b {
+        padding-bottom: $cell--pad;
+    }    
+    &.-align-start {
+        align-self: flex-start;
+    }    
+    &.-flex {
+        flex: 1;  
+    }           
+}
+
+//----------------
+// Components
+//----------------
+// Title
+.title {
+    @include cns-font-face($title--font-family, $title--font-size, null, $title--font-weight);
+    margin: 0 $title--margin;
+}
+
+// Close button
+$close-btn--pos-top: 0.2rem;
+$close-btn--pos-right: 0.2rem;
+$close--font-size: 1.2rem;
+$close--padding: 0rem 1.2rem; 
+$close-btn--color: #fff;
+$close-btn--bg-color: $color-1;
+$close-btn--color-hover: $color-2;
+.close-btn {
+    display: block;
+    position: absolute;
+    top: $close-btn--pos-top;
+    right: $close-btn--pos-right;
+    text-decoration: none;
+    font-size: $close--font-size;
+    color: $close-btn--color;
+    background-color: $close-btn--bg-color;
+    padding: $close--padding;
+    @include link;          
+}
+
+// Field
+.field {
+    &::-webkit-input-placeholder {
+        opacity: 0.54; /* FF default */
+    }
+    &:focus::-webkit-input-placeholder {        
+            color: transparent; 
+    }
+}
+
+// Input box
+$input-box--padding: 0.2rem;
+$field--border: 1px solid $color-1;
+$field--padding: 0.5rem;
+$field--font-size: 1.125rem;
+@mixin field {
+    padding: $field--padding;   
+    font-size: $field--font-size;
+    background: transparent;
+    border: $field--border;        
+    color: $body--color;     
+}
+.input-box {
+    @include field();       
+    padding: $input-box--padding;  
+    margin: 0 $title--margin;       
+    > .field {
+        @include field();
+        border: none;
+        margin: 0;
+    }   
+}
+
+// Load button
+$button--text-align: center;
+$button--font-size: 1.125rem;
+$button--font-weight: 600;
+$button--min-width: 130px;
+$button--color-hover: $color-2;
+.button {    
+    padding: $field--padding;   
+    font-size: $button--font-size;
+    background-color: $color-1;
+    color: $body--bg-color;
+    text-align: $button--text-align;
+    font-weight: $button--font-weight;
+    overflow: hidden;
+    width: $button--min-width;
+    min-width: $button--min-width;        
+    @include link;
+}

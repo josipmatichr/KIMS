@@ -1,0 +1,710 @@
+@import './partials/reset';
+@import './partials/animations';
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+//----------------------
+// Basic variables
+//----------------------
+$color-1: #aeee00; 
+$color-2: #ff358b;
+$body--bg-color: #000;
+$body--color: #ddd;
+
+$body--text-size: 16px;
+$body--font-family: 'Roboto';
+$title--font-family: 'Open Sans';
+$title--font-size: 2.5rem;
+$title--font-weight: 600;
+$title--line-height: 1.5;
+$title--margin: 2rem 0;
+
+$img--path: './../img/';
+
+$logo--bg-width: 450px;
+$logo--bg-height: $logo--bg-width/2.891;
+$logo--margin: 1rem auto;
+$logo-img--url: $img--path + 'logo.svg';
+
+$chat-face--bg-width: 40px;
+$chat-face--bg-height: $chat-face--bg-width*1.10736;
+$chat-face--margin: auto 0.5rem;
+$chat-face--url: $img--path + 'chat.svg';
+
+$overlay--bg-color: rgba(0,0,0,0.95);
+$button--brightness: 0.85;
+
+// Layout
+$main--width: 960px;
+$page--spacing: 1rem;
+$cell--pad: 1rem;
+
+//----------------------
+// Mixins
+//----------------------
+@mixin cns-font-face($family: false, $size: false, $colour: false, $weight: false,  $lh: false) {
+    @if $family 
+        { font-family: $family; }
+    @else 
+        { font-family: Helvetica, Arial, sans-serif; }
+    @if $size { 
+        font-size: $size; 
+        line-height: $title--line-height;
+    }
+    @if $colour { color: $colour; }
+    @if $weight { font-weight: $weight; }
+    @if $lh { line-height: $lh; }
+}
+
+@mixin cns-cells() {
+    @for $i from 1 through 12 {
+        $width: percentage($i / 12);
+        &.-w-#{$i}-#{12} {    
+            width: $width;       
+        }
+    }    
+}
+
+@mixin cns-fixed-height() {
+    $steps: 12;
+    @for $i from 1 through $steps {
+        $height: percentage($i / $steps);
+        &.-h-#{$i}-#{$steps} {
+            height: $height;
+            min-height: $height;
+        }
+    }    
+}
+
+/**
+ * Selectively remove a border (e.g., "no-border -left").
+ */
+@mixin no-border {
+    $sides: ("left", "top", "right", "bottom");
+    @each $side in $sides {        
+        &.-no-#{$side}-#{border} {
+            border-#{$side}: none;            
+        }
+    }    
+}
+
+//---------------------------------------
+// Some common components and utilities
+//---------------------------------------
+.title {
+    @include cns-font-face($title--font-family, $title--font-size, null, $title--font-weight);
+    margin: $title--margin;
+}
+
+.logo {
+    background-image: url($logo-img--url);
+    background-size: contain;     
+    background-position: center;
+    background-repeat: no-repeat;     
+    width: $logo--bg-width; 
+    height: $logo--bg-height;
+    margin: $logo--margin;
+}
+
+.chat {
+    background-image: url($chat-face--url);
+    background-size: contain;     
+    background-position: center;
+    background-repeat: no-repeat;     
+    width: $chat-face--bg-width; 
+    height: $chat-face--bg-height;
+    margin: $chat-face--margin;
+}
+
+.field {
+    &::-webkit-input-placeholder {
+        opacity: 0.54; /* FF default */
+    }
+    &:focus::-webkit-input-placeholder {        
+            color: transparent; 
+    }
+}
+
+.spinner { 
+    display: block;
+    animation: spin 1s linear infinite;  
+    &.-circle-1 {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto;
+        border-radius: 50%;        
+        border: 5px solid $color-1;
+        border-right-color: transparent;
+        box-shadow: 0 0 35px 2px $color-1;               
+    }
+    &.-circle-2 {        
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        border: 3px solid rgba(255, 255, 255, 0.25);
+        border-top-color: rgba(255, 255, 255, 0.85);
+    }    
+}
+
+.overlay {
+    display: none;
+    position: absolute;
+    top: 0px; 
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: $overlay--bg-color;
+    z-index: 99999;
+}
+
+.align-middle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);    
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 100%;     
+}
+
+.before {
+    @extend .align-middle;
+    left: 0px;
+}
+
+.after {
+    @extend .align-middle;
+    right: 15px;
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+.text-size {
+    &.-s-2 {
+        font-size: 1.25rem;
+    }
+}
+
+.text-center {
+    text-align: center;
+}
+
+.margin {
+    &.-tb-1 {
+        margin: 1rem auto; 
+    }
+    &.-tb-2 {
+        margin: 2rem auto; 
+    }
+}
+
+//----------------------
+// Base layout
+//----------------------
+body { 
+    background-color: $body--bg-color;
+    @include cns-font-face($body--font-family, $body--text-size, $body--color);    
+    width: 100%;
+    height: 100%;
+}
+
+.cns-page {
+    position: relative;
+    max-width: $main--width;
+    height: 100vh;    
+    margin: 0 auto;
+    &.-space {
+        padding: $page--spacing;
+    }    
+    &.-full-width {
+        max-width: 100%;
+    }
+    &.-absolute {
+        position: absolute;
+        top: 0;
+        left: 0;        
+    }
+}
+
+.cns-container {
+    border: 0px solid dodgerblue; /* Debugging */
+    display: flex;
+    flex-flow: row wrap;    
+    justify-content: center;
+    &.-justify-between {
+        justify-content: space-between;
+    }        
+    &.-space-between {
+        align-content: space-between;    
+    }  
+    &.-align-center {
+        align-items: center;
+    }
+    &.-align-end {
+        align-items: flex-end;
+    } 
+    &.-column {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        &.-justify-end {
+            justify-content: flex-end;
+        }
+        &.-justify-between {
+            justify-content: space-between;
+        }
+        &.-justify-around {
+            justify-content: space-around;
+        }        
+    }  
+    @include cns-fixed-height(); /* Usage: -h-2-12 */ 
+}
+
+/**
+ * Flex item cells: usage -w-1-12, -w-2-12, ..., -w-12-12.
+ */
+.cns-cell { 
+    border: 0px solid red; /* Debugging */
+    @include cns-cells();  
+    &.-pad-r {
+        padding-right: $cell--pad;
+    }
+    &.-pad-l {
+        padding-left: $cell--pad;
+    }
+    &.-pad-t {
+        padding-top: $cell--pad;
+    }
+    &.-pad-b {
+        padding-bottom: $cell--pad;
+    }    
+    &.-align-start {
+        align-self: flex-start;
+    }    
+    &.-flex {
+        flex: 1;  
+    }           
+}
+
+//----------------------
+// ServerForm
+//----------------------
+$srvFrm--break-large: 450px;
+$srvFrm--max-width: $srvFrm--break-large;
+$srvFrm--min-width: 400px;
+
+$srvFrm--font-size: 1.125rem;
+$srvFrm--pad: 0.5rem;
+$srvFrm--main-color: $color-1; 
+
+$srvFrmBtn--color: #000;
+$srvFrmBtn--text-align: center;
+$srvFrmBtn--font-weight: 600;
+
+$srvFrmFld--color: $body--color;
+$srvFrmFld--border: 1px solid $srvFrm--main-color;
+$srvFrmFld--margin-bottom: 0.3rem;
+
+$button--min-width: 160px;
+
+@mixin base {
+    padding: $srvFrm--pad;   
+    font-size: $srvFrm--font-size;    
+}
+
+@mixin field {
+    @include base;
+    background: transparent;
+    border: $srvFrmFld--border;        
+    color: $srvFrmFld--color;             
+    margin-bottom: $srvFrmFld--margin-bottom;
+}
+
+.button {
+    @include base;
+    background-color: $color-1;
+    cursor: pointer;
+    color: $srvFrmBtn--color;
+    text-align: $srvFrmBtn--text-align;
+    font-weight: $srvFrmBtn--font-weight;
+    overflow: hidden;
+    width: $button--min-width;
+    min-width: $button--min-width;
+    &:hover {
+        filter: brightness($button--brightness);
+    }
+    &.-loaded {
+        background-color: $color-2;
+        color: #fff;
+    }
+}
+
+.server-form {  
+    position: relative;   
+    > .field {
+        @include field;
+        @include no-border();   
+    }        
+    @media only screen and (min-width: $srvFrm--break-large) {
+        max-width: $srvFrm--max-width;
+    }    
+}
+
+//----------------------
+// MainPage
+//----------------------
+$main--box-height: 450px;
+$main--min-width: 500px;
+$main-head--font-size: 1rem;
+$main-head--font-weight: 500; /*$title--font-weight;*/
+$main-head--padding: 0.3rem 0;
+
+// Hamburger icon and label
+$hamburger--bg-color: $color-2; 
+
+.nickname {
+    color: $hamburger--bg-color;
+}
+
+.hamburger {
+    cursor: pointer;
+    > .icon {
+        background: $hamburger--bg-color;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+        width: 39px;
+        height: 39px;        
+        > span {
+            display: inline-block;
+            position: absolute;
+            top: 10px;
+            left: 8px;
+            right: 9px;
+            height: 3px;
+            background: white;
+        }
+        &:before, &:after {
+            position: absolute;
+            display: block;
+            left: 8px;
+            right: 9px;
+            height: 3px;
+            background-color: #fff;
+            content: "";        
+        }
+        &:before {
+            top: 18px;
+        }
+        &:after {
+            bottom: 10px;
+        }
+    }
+    > .label {
+        display: inline-block;
+        margin-left: 0.5rem;             
+    }
+}
+
+.header {
+    flex: 1;
+    padding: $main-head--padding;
+    font-size: $main-head--font-size;
+    font-weight: $title--font-weight;
+}
+
+.active {
+    padding: 0.5rem;
+    margin-left: 0.5rem;       
+    cursor: pointer;    
+    background: $hamburger--bg-color;
+    color: #fff;
+}
+
+.main-page {
+    min-width: $main--min-width;
+}
+
+//----------------------
+// MsgBoard
+//----------------------
+$msg-box--padding: 0 0.5rem;
+$input-box--padding: 0.2rem;
+
+$msg-cloud--font-size: 1.125rem;
+$msg-cloud--font-weight: 600;
+$msg-cloud--margin: 15px;
+$msg-cloud--padding: 15px;
+$msg-cloud--border-radius: 3px;
+$msg-cloud--line-height: 1.3;
+$msg-cloud--in-color: #fff;
+$msg-cloud--in-bg: $color-2;
+$msg-cloud--out-color: #ccc;
+$msg-cloud--out-bg: #333333;
+$msg-cloud-main-text--padding: 2px 0;
+$msg-cloud-icon--padding: 0 2px;
+@mixin msg-cloud--in-triangle {
+    content: "";
+    display: block;
+    position: absolute;
+    left: -15px;
+    top: 3px;
+    width: 0;
+    border-width: 15px 0px 0px 15px;
+    border-style: solid;
+    border-color: $msg-cloud--in-bg transparent;    
+} 
+@mixin msg-cloud--out-triangle {
+    content: "";
+    display: block;
+    position: absolute;
+    right: -15px;
+    top: 3px;
+    width: 0;
+    border-width: 15px 15px 0px 0px;
+    border-style: solid;
+    border-color: $msg-cloud--out-bg transparent;    
+}
+
+.msg-board {
+    width: 100%;
+    > .msg-box {
+        overflow-y: auto;        
+        height: $main--box-height;
+        min-height: $main--box-height;
+        text-align: left;
+        @include field();
+    }
+    > .input-box {
+        @include field();        
+        padding: $input-box--padding;  
+        margin: 0;       
+        > .field {
+            @include field();
+            border: none;
+            margin: 0;
+        }   
+    } 
+}
+
+.msg-cloud {
+    &.-in {
+        text-align: left;
+    }
+    &.-out {
+        text-align: right;        
+    }  
+    &.-content {
+        display: inline-block;
+        position: relative;
+        padding: $msg-cloud--padding;
+        margin: $msg-cloud--margin;
+        font-size: $msg-cloud--font-size;
+        text-align: left;
+        border-radius: $msg-cloud--border-radius;
+        word-break: break-all;        
+        line-height: $msg-cloud--line-height;
+        &.-in {
+            color: #fff;
+            background: $msg-cloud--in-bg;
+            &:before {
+                @include msg-cloud--in-triangle;                
+            }
+        }        
+        &.-out {
+            color: #ccc;
+            background: $msg-cloud--out-bg;
+            &:after {
+                @include  msg-cloud--out-triangle;
+            }
+        }
+    }
+    &.-bold {
+        font-weight: $msg-cloud--font-weight;
+    } 
+    &.-small {
+        font-size: 0.6*$msg-cloud--font-size;
+    }
+    &.-main-text {
+        padding: $msg-cloud-main-text--padding;        
+    }
+}
+
+//----------------------
+// ClientsBoard
+//----------------------
+$client-board--max-width: 600px;
+$client-board--height: 100%;
+$client-board--opacity: 1;
+$client-board--padding: 60px 0 0 0;
+$client-board--border: 1px;
+$client-board--border-color: $color-2;
+$client-board--transitions: 0.5s;
+
+// Close button
+$close-btn--pos-top: 20px;
+$close-btn--pos-right: 10px;
+$close--font-size: 2.15rem;
+$close-btn--color: #818181;
+$close-btn--color-hover: #f1f1f1;
+
+.close-btn {
+    display: block;
+    position: absolute;
+    top: $close-btn--pos-top;
+    right: $close-btn--pos-right;
+    text-decoration: none;
+    font-size: $close--font-size;
+    color: $close-btn--color;
+    line-height: 0;
+    transition: $client-board--transitions;
+    &:hover {
+        color: $close-btn--color-hover;              
+    }       
+}
+
+.clients-board {
+    position: absolute;
+    top: 0;
+    left: -$client-board--border - 1;
+    height: $client-board--height;    
+    max-width: $client-board--max-width;
+    border: 1px solid $client-board--border-color;   
+    background: $body--bg-color;
+    opacity: $client-board--opacity;
+    &.visible {
+        width: $client-board--max-width;
+        left: 0;
+    }
+    width: 0; /* 0 width - change this with JavaScript */
+    z-index: 1; 
+    overflow-x: hidden; 
+    padding: $client-board--padding;
+    transition: $client-board--transitions;
+}
+
+//----------------------
+// ClientsTable
+//----------------------
+$clients-table--padding: 0.5rem 0.5rem;
+$clients-table-head--color: #fff;
+$secret--padding: 0 40px;
+.clients-table {
+    border-collapse: collapse;
+    overflow: hidden;
+    table-layout: fixed;
+    th {
+        background: $client-board--border-color;
+        font-size: $srvFrm--font-size;
+        font-weight: $title--font-weight;
+        color: $clients-table-head--color;
+    }
+    tr:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);        
+    }
+    tr:last-child {
+        border-bottom: 1px solid $client-board--border-color;        
+    }
+    td, th {
+        padding: $clients-table--padding;
+        vertical-align: middle;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;        
+    }  
+    th {
+        text-transform: capitalize;
+    }  
+}
+
+.secret {    
+    width: 100%;
+    height: 100%;    
+    background-color: transparent;    
+    border: none;
+    padding: $secret--padding;  
+    color: $body--color;    
+    font-size: $body--text-size;
+    text-align: center;
+}
+
+
+//--------------------------
+// ReactCSSTransitionGroup
+//--------------------------
+.app-appear {
+    opacity: 0.01;
+}
+
+.app-appear.app-appear-active {
+    opacity: 1;
+    transition: opacity .5s ease-in;
+}
+
+.app-enter {
+    opacity: 0.01;
+}
+
+.app-enter.app-enter-active {
+    opacity: 1;
+    transition: opacity 0.5s ease-in;
+}
+
+.app-leave {
+    opacity: 1;
+}
+
+.app-leave.app-leave-active {
+    opacity: 0.01;
+    transition: opacity 300ms ease-in;
+}
+
+.msg-appear {
+    opacity: 0.01;
+}
+
+.msg-appear.msg-appear-active {
+    opacity: 1;
+    transition: opacity .5s ease-in;
+}
+
+.msg-enter {
+    opacity: 0.01;
+}
+
+.msg-enter.msg-enter-active {
+    opacity: 1;
+    transition: opacity 0.5s ease-in;
+}
+
+
+//--------------------------
+// Scrollbar
+//--------------------------
+::-webkit-scrollbar {
+    width: 12px;
+}
+ 
+::-webkit-scrollbar-track {
+    border-left: solid 1px rgba(100,100,100,0.4);
+    border-top: solid 1px rgba(100,100,100,0.4);
+    border-bottom: solid 1px rgba(100,100,100,0.4);
+}
+ 
+::-webkit-scrollbar-thumb {
+    background: $color-1; 
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+	background: rgba(100,100,100,0.0); 
+}
