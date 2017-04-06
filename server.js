@@ -99,25 +99,26 @@ const server = Net.createServer((socket) => {
 function broadcast(sender, msg) {
 	debug('BROADCAST: ' + msg);
 
-	var buffer = msg.toString();
+	var _msg = JSON.parse(msg);
+	debug("nakon parsiranja", _msg);
+	if(_msg.content !== undefined)
+		{
+			if(_msg.content.length > 96){
+				var block1 = _msg.content.substring(0,32);
+				var block2 = _msg.content.substring(32,64);
+				var rest = _msg.content.substring(64,_msg.content.length);
+				block2 += block1 + rest;
 
-	var pos = buffer.search("content\"\:\"");
-	debug("Pozicija je: " + pos);
-	if (pos != -1) {
-		var dio_stringa = buffer.substring(pos, buffer.length);
-		debug("Poruka je: " + dio_stringa);
-		var sadrzaj = dio_stringa.substring(10, dio_stringa.length - 34);
-		debug("Sadrzaj je:" + sadrzaj);
-			var block1 = sadrzaj.slice(0,16);
-			var block2 = sadrzaj.slice(16,32);
-			var block3 = sadrzaj.substring(32);
-			debug ("vrijednost blokova " , block1)
-			debug ("vrijednost blokova " , block2)
-			debug ("vrijednost blokova " , block3)
-			var druga_poruka = block1 + block2 + block3;
-			buffer = buffer.replace(sadrzaj, druga_poruka);
-			msg = buffer;
-	}
+				_msg.content = block2;
+
+				msg = JSON.stringify(_msg);
+				debug("poruka na kraju", + msg);
+			}
+
+		}
+
+
+
 	let i = 0;
 	CLIENTS.forEach((client) => {
 		if (client.clientID && client !== sender) {
@@ -169,13 +170,4 @@ function getOtherClients(receiver) {
 		}
 	})
 	return clients;
-}
-
-function a2hex(str) {
-  var arr = [];
-  for (var i = 0, l = str.length; i < l; i ++) {
-    var hex = Number(str.charCodeAt(i)).toString(16);
-    arr.push(hex);
-  }
-  return arr.join('');
 }
