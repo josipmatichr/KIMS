@@ -16,8 +16,8 @@ let iv_hex = iv.toString('hex');
 
 function encrypt(text, secret) {
     var chiper = crypto.createCipheriv(algorithm, secret, iv);
-    var crypted = chiper.update(text, 'utf8', 'base64');
-    crypted += chiper.final('base64');
+    var crypted = chiper.update(text, 'utf8', 'hex');
+    crypted += chiper.final('hex');
     crypted += iv_hex;
     return crypted;
 }
@@ -27,7 +27,7 @@ function decrypt(text, secret) {
     let iv_dec = Buffer.from(iv_hex,'hex')
     let plaintext = text.substr(0,text.length - 32 );
     var decipher = crypto.createDecipheriv(algorithm, secret, iv_dec);
-    var dec = decipher.update(plaintext, 'base64', 'utf8')
+    var dec = decipher.update(plaintext, 'hex', 'utf8')
     dec += decipher.final('utf8');
     return dec;
 }
